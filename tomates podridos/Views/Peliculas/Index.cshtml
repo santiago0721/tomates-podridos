@@ -55,7 +55,8 @@
                 @Html.DisplayFor(modelItem => item.nombre)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.img)
+                    <img src=@Html.DisplayFor(modelItem => item.img)  width="100" height="120">
+                    
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.calCritica)

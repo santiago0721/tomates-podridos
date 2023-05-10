@@ -229,7 +229,26 @@ namespace tomates_podridos.Controllers
             else 
             {
                 // url valida
-                ViewBag.men = $"trabajo realizado,|    {titulo_pelicula}    | cargada con exito";
+                if (ModelState.IsValid)
+                {
+                    var pelicula = this.crear(document);
+                    var validar = _context.Pelicula.Any(x => x.nombre == pelicula.nombre);
+                    
+                    if (validar) 
+                    {
+                        ViewBag.men = "Ya existe en la base de datos";
+                    }
+                    else 
+                    {
+                        _context.Add(pelicula);
+                        await _context.SaveChangesAsync();
+                        ViewBag.men = $"trabajo realizado,|    {titulo_pelicula}    | cargada con exito ";
+   
+                    }
+                    return View();
+
+                }
+                ViewBag.men = $"no es valido,|    {titulo_pelicula}    | pailasssss";
                 return View();
             }
             
@@ -237,7 +256,7 @@ namespace tomates_podridos.Controllers
         }
 
 
-        /*public Pelicula crear(HtmlDocument document) 
+        public Pelicula crear(HtmlDocument document) 
         {
             Pelicula pelicula = new Pelicula();
             pelicula.nombre = this.titulo_pelicula(document);
@@ -253,9 +272,9 @@ namespace tomates_podridos.Controllers
             pelicula.duracion= datos[4];
             pelicula.actores= this.actores(document);
 
-
+            return pelicula;
         
-        }*/
+        }
 
         // web scraping
 

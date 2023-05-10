@@ -229,13 +229,33 @@ namespace tomates_podridos.Controllers
             else 
             {
                 // url valida
-                ViewBag.men = $"trabajo realizado,| {titulo_pelicula} | cargada con exito";
+                ViewBag.men = $"trabajo realizado,|    {titulo_pelicula}    | cargada con exito";
                 return View();
             }
             
 
         }
 
+
+        /*public Pelicula crear(HtmlDocument document) 
+        {
+            Pelicula pelicula = new Pelicula();
+            pelicula.nombre = this.titulo_pelicula(document);
+            pelicula.img = this.img(document);
+            pelicula.calCritica = this.tomatometerscore(document);
+            pelicula.calAudiencia = this.audiencescore(document);
+            pelicula.plataformas = this.plataformas(document);
+            pelicula.synopsis = this.synopsis(document);
+            var datos = this.datos_principales(document);
+            pelicula.clasificacion = datos[0];
+            pelicula.equipoDir = datos[2];
+            pelicula.fecha = datos[3];
+            pelicula.duracion= datos[4];
+            pelicula.actores= this.actores(document);
+
+
+        
+        }*/
 
         // web scraping
 

@@ -8,5 +8,9 @@
 
         public string Description { get; set; }
 
+        public int PeliculaId { get; set; }
+
+        public Pelicula Pelicula { get; set; }
+
     }
 }

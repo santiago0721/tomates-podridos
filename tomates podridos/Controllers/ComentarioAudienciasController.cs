@@ -22,9 +22,8 @@ namespace tomates_podridos.Controllers
         // GET: ComentarioAudiencias
         public async Task<IActionResult> Index()
         {
-              return _context.ComentarioAudiencia != null ? 
-                          View(await _context.ComentarioAudiencia.ToListAsync()) :
-                          Problem("Entity set 'tomates_podridosContext.ComentarioAudiencia'  is null.");
+            var tomates_podridosContext = _context.ComentarioAudiencia.Include(c => c.Pelicula);
+            return View(await tomates_podridosContext.ToListAsync());
         }
 
         // GET: ComentarioAudiencias/Details/5
@@ -36,6 +35,7 @@ namespace tomates_podridos.Controllers
             }
 
             var comentarioAudiencia = await _context.ComentarioAudiencia
+                .Include(c => c.Pelicula)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (comentarioAudiencia == null)
             {
@@ -48,6 +48,7 @@ namespace tomates_podridos.Controllers
         // GET: ComentarioAudiencias/Create
         public IActionResult Create()
         {
+            ViewData["PeliculaId"] = new SelectList(_context.Pelicula, "Id", "Id");
             return View();
         }
 
@@ -56,7 +57,7 @@ namespace tomates_podridos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description")] ComentarioAudiencia comentarioAudiencia)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,PeliculaId")] ComentarioAudiencia comentarioAudiencia)
         {
             if (ModelState.IsValid)
             {
@@ -64,6 +65,7 @@ namespace tomates_podridos.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["PeliculaId"] = new SelectList(_context.Pelicula, "Id", "Id", comentarioAudiencia.PeliculaId);
             return View(comentarioAudiencia);
         }
 
@@ -80,6 +82,7 @@ namespace tomates_podridos.Controllers
             {
                 return NotFound();
             }
+            ViewData["PeliculaId"] = new SelectList(_context.Pelicula, "Id", "Id", comentarioAudiencia.PeliculaId);
             return View(comentarioAudiencia);
         }
 
@@ -88,7 +91,7 @@ namespace tomates_podridos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] ComentarioAudiencia comentarioAudiencia)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,PeliculaId")] ComentarioAudiencia comentarioAudiencia)
         {
             if (id != comentarioAudiencia.Id)
             {
@@ -115,6 +118,7 @@ namespace tomates_podridos.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["PeliculaId"] = new SelectList(_context.Pelicula, "Id", "Id", comentarioAudiencia.PeliculaId);
             return View(comentarioAudiencia);
         }
 
@@ -127,6 +131,7 @@ namespace tomates_podridos.Controllers
             }
 
             var comentarioAudiencia = await _context.ComentarioAudiencia
+                .Include(c => c.Pelicula)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (comentarioAudiencia == null)
             {

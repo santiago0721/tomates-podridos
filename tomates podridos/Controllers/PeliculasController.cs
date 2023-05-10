@@ -22,8 +22,9 @@ namespace tomates_podridos.Controllers
         // GET: Peliculas
         public async Task<IActionResult> Index()
         {
-            var tomates_podridosContext = _context.Pelicula.Include(p => p.ComentarioAudiencia).Include(p => p.ComentarioCritica);
-            return View(await tomates_podridosContext.ToListAsync());
+              return _context.Pelicula != null ? 
+                          View(await _context.Pelicula.ToListAsync()) :
+                          Problem("Entity set 'tomates_podridosContext.Pelicula'  is null.");
         }
 
         // GET: Peliculas/Details/5
@@ -35,8 +36,6 @@ namespace tomates_podridos.Controllers
             }
 
             var pelicula = await _context.Pelicula
-                .Include(p => p.ComentarioAudiencia)
-                .Include(p => p.ComentarioCritica)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (pelicula == null)
             {
@@ -49,8 +48,6 @@ namespace tomates_podridos.Controllers
         // GET: Peliculas/Create
         public IActionResult Create()
         {
-            ViewData["ComentarioAudienciaId"] = new SelectList(_context.ComentarioAudiencia, "Id", "Id");
-            ViewData["ComentarioCriticaId"] = new SelectList(_context.ComentarioCritica, "Id", "Id");
             return View();
         }
 
@@ -59,7 +56,7 @@ namespace tomates_podridos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,nombre,img,calCritica,calAudiencia,plataformas,synopsis,clasificacion,equipoDir,fecha,duracion,actores,ComentarioAudienciaId,ComentarioCriticaId")] Pelicula pelicula)
+        public async Task<IActionResult> Create([Bind("Id,nombre,img,calCritica,calAudiencia,plataformas,synopsis,clasificacion,equipoDir,fecha,duracion,actores")] Pelicula pelicula)
         {
             if (ModelState.IsValid)
             {
@@ -67,8 +64,6 @@ namespace tomates_podridos.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ComentarioAudienciaId"] = new SelectList(_context.ComentarioAudiencia, "Id", "Id", pelicula.ComentarioAudienciaId);
-            ViewData["ComentarioCriticaId"] = new SelectList(_context.ComentarioCritica, "Id", "Id", pelicula.ComentarioCriticaId);
             return View(pelicula);
         }
 
@@ -85,8 +80,6 @@ namespace tomates_podridos.Controllers
             {
                 return NotFound();
             }
-            ViewData["ComentarioAudienciaId"] = new SelectList(_context.ComentarioAudiencia, "Id", "Id", pelicula.ComentarioAudienciaId);
-            ViewData["ComentarioCriticaId"] = new SelectList(_context.ComentarioCritica, "Id", "Id", pelicula.ComentarioCriticaId);
             return View(pelicula);
         }
 
@@ -95,7 +88,7 @@ namespace tomates_podridos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,nombre,img,calCritica,calAudiencia,plataformas,synopsis,clasificacion,equipoDir,fecha,duracion,actores,ComentarioAudienciaId,ComentarioCriticaId")] Pelicula pelicula)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,nombre,img,calCritica,calAudiencia,plataformas,synopsis,clasificacion,equipoDir,fecha,duracion,actores")] Pelicula pelicula)
         {
             if (id != pelicula.Id)
             {
@@ -122,8 +115,6 @@ namespace tomates_podridos.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ComentarioAudienciaId"] = new SelectList(_context.ComentarioAudiencia, "Id", "Id", pelicula.ComentarioAudienciaId);
-            ViewData["ComentarioCriticaId"] = new SelectList(_context.ComentarioCritica, "Id", "Id", pelicula.ComentarioCriticaId);
             return View(pelicula);
         }
 
@@ -136,8 +127,6 @@ namespace tomates_podridos.Controllers
             }
 
             var pelicula = await _context.Pelicula
-                .Include(p => p.ComentarioAudiencia)
-                .Include(p => p.ComentarioCritica)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (pelicula == null)
             {

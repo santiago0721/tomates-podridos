@@ -1,0 +1,91 @@
+﻿@model tomates_podridos.Models.Pelicula
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Pelicula</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="nombre" class="control-label"></label>
+                <input asp-for="nombre" class="form-control" />
+                <span asp-validation-for="nombre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="img" class="control-label"></label>
+                <input asp-for="img" class="form-control" />
+                <span asp-validation-for="img" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="calCritica" class="control-label"></label>
+                <input asp-for="calCritica" class="form-control" />
+                <span asp-validation-for="calCritica" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="calAudiencia" class="control-label"></label>
+                <input asp-for="calAudiencia" class="form-control" />
+                <span asp-validation-for="calAudiencia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="plataformas" class="control-label"></label>
+                <input asp-for="plataformas" class="form-control" />
+                <span asp-validation-for="plataformas" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="synopsis" class="control-label"></label>
+                <input asp-for="synopsis" class="form-control" />
+                <span asp-validation-for="synopsis" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="clasificacion" class="control-label"></label>
+                <input asp-for="clasificacion" class="form-control" />
+                <span asp-validation-for="clasificacion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="equipoDir" class="control-label"></label>
+                <input asp-for="equipoDir" class="form-control" />
+                <span asp-validation-for="equipoDir" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="fecha" class="control-label"></label>
+                <input asp-for="fecha" class="form-control" />
+                <span asp-validation-for="fecha" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="duracion" class="control-label"></label>
+                <input asp-for="duracion" class="form-control" />
+                <span asp-validation-for="duracion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="actores" class="control-label"></label>
+                <input asp-for="actores" class="form-control" />
+                <span asp-validation-for="actores" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ComentarioAudienciaId" class="control-label"></label>
+                <select asp-for="ComentarioAudienciaId" class="form-control" asp-items="ViewBag.ComentarioAudienciaId"></select>
+                <span asp-validation-for="ComentarioAudienciaId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ComentarioCriticaId" class="control-label"></label>
+                <select asp-for="ComentarioCriticaId" class="form-control" asp-items="ViewBag.ComentarioCriticaId"></select>
+                <span asp-validation-for="ComentarioCriticaId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

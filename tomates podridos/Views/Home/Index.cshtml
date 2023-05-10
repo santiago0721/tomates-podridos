@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    
+    Layout = null;
+
+}
+
+<div class="text-center">
+    <h1 class="display-4">Bienvenido</h1>
+
+    <div class="inicio">
+
+        <table class="text-center">
+
+            <td>
+                <input type="button" value="ExpertoEnCine" onclick="location.href='@Url.Action("Login", "ExpertoEnCines")'" />
+            </td>
+
+            <td>
+                <input type="button" value="Cinefilo" onclick="location.href='@Url.Action("Login", "Cinefiloes")'" />
+            </td>
+
+
+
+        </table>
+    </div>
+
+</div>

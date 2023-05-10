@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewData["Title"] = "login";
+
+    Layout = null;
+}
+
+<html>
+<head>
+    <title>login experto en cine</title>
+</head>
+<body>
+
+    <h4> inicio sesion </h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <form method="post">
+                usuario: <input type="text" name="name" id="txtName" /><br />
+
+                contraseña: <input type="text" name="password" id="txtpassword" /><br />
+
+                <button type="submit">Enviar información</button>
+
+            </form>
+        </div>
+
+        <h2 class="text-center">
+            @ViewBag.mensaje
+        </h2>
+    </div>
+
+    <div>
+        <a asp-controller="Home" asp-action="Index">volver al inicio</a>
+        <input type="button" value="registrarse" onclick="location.href='@Url.Action("Create", "ExpertoEnCines")'" />
+    </div>
+
+    
+</body>
+</html>
+

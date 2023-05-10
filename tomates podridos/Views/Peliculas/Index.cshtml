@@ -1,0 +1,107 @@
+﻿@model IEnumerable<tomates_podridos.Models.Pelicula>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.img)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.calCritica)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.calAudiencia)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.plataformas)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.synopsis)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.clasificacion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.equipoDir)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.fecha)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.duracion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.actores)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ComentarioAudiencia)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ComentarioCritica)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.img)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.calCritica)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.calAudiencia)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.plataformas)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.synopsis)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.clasificacion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.equipoDir)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.fecha)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.duracion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.actores)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ComentarioAudiencia.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ComentarioCritica.Id)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

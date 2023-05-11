@@ -242,6 +242,13 @@ namespace tomates_podridos.Controllers
                     {
                         _context.Add(pelicula);
                         await _context.SaveChangesAsync();
+
+                        int pelicula_id = pelicula.Id;
+
+                        //se invoca reviews para cargar esta informacion de los comentarios
+                        this.reviews(link,pelicula_id);
+
+
                         ViewBag.men = $"trabajo realizado,|    {titulo_pelicula}    | cargada con exito ";
    
                     }
@@ -254,7 +261,24 @@ namespace tomates_podridos.Controllers
             
 
         }
+        //probar
+        /*public List<genero> Crear_genero(HtmlDocument document) 
+        {
+            
 
+            var generos_pelicula = this.datos_principales(document)[1];
+            List<string> data  = this.generos(generos_pelicula);
+            
+            foreach(string genero_ in data) 
+            {
+
+                if ( !(_context.genero.Any(x => x.Name == genero_))) 
+                {
+                       
+                }
+            }
+
+        }*/
 
         public Pelicula crear(HtmlDocument document) 
         {
@@ -295,7 +319,7 @@ namespace tomates_podridos.Controllers
         }
 
 
-        // datos a traer
+        // datos datos pelicula
 
         public string audiencescore(HtmlDocument htmlDoc)
         {
@@ -443,6 +467,86 @@ namespace tomates_podridos.Controllers
             return Actores.Substring(1);
         }
 
+
+
+
+        //reviews
+        
+        //se debe agregar  /review a la url al final
+        public async void reviewCriticos(HtmlDocument htmlDoc,int id)
+        {
+            var critica = htmlDoc.DocumentNode.Descendants("div")
+                .Where(node => node.GetAttributeValue("class", "").Contains("review-text"))
+                .ToList();
+
+            var nombre = htmlDoc.DocumentNode.Descendants("div")
+                .Where(node => node.GetAttributeValue("class", "").Contains("reviewer-name-and-publication"))
+                .ToList();
+
+            
+            for (int i = 0; i <= 3; i++)
+            {
+                var critica_ = new ComentarioCritica();
+                critica_.Name = nombre[i].InnerText.Trim().Split("\n")[0].Trim();
+                critica_.Description = critica[i].InnerText.Trim().Split("\n")[0].Trim();
+                critica_.PeliculaId = id;
+                _context.ComentarioCritica.Add(critica_);
+                await _context.SaveChangesAsync();
+
+            }
+
+
+        }
+
+        //    /reviews?type=user    al final de la url inicial
+        public async void reviewAudiencia(HtmlDocument htmlDoc, int id)
+        {
+            var critica = htmlDoc.DocumentNode.Descendants("p")
+                .Where(node => node.GetAttributeValue("data-qa", "").Contains("review-text"))
+                .ToList();
+
+            var nombre = htmlDoc.DocumentNode.Descendants("div")
+                .Where(node => node.GetAttributeValue("class", "").Contains("review-data"))
+                .ToList();
+
+            for (int i = 0; i <= 3; i++)
+            {
+                var critica_ = new ComentarioAudiencia();
+                critica_.Name = nombre[i].InnerText.Trim().Split("\n")[0].Trim();
+                critica_.Description = critica[i].InnerText.Trim().Split("\n")[0].Trim();
+                critica_.PeliculaId = id;
+                _context.ComentarioAudiencia.Add(critica_);
+                _context.SaveChangesAsync();
+
+               
+
+            }
+
+
+        }
+
+
+
+
+        //llama los metodos de review y sube a base de datos
+        public void reviews(string link,int id) 
+        {
+            link += "/reviews";
+
+            var Response = this.call_url(link).Result;
+            HtmlDocument document = this.parse_html(Response);
+
+            this.reviewCriticos(document, id);
+
+            link += "?type=user";
+
+            Response = this.call_url(link).Result;
+            document = this.parse_html(Response);
+
+            this.reviewAudiencia(document, id);
+
+
+        }
 
 
 

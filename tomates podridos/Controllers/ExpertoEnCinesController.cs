@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Security.Policy;
 using System.Threading.Tasks;
@@ -248,6 +249,9 @@ namespace tomates_podridos.Controllers
                         //se invoca reviews para cargar esta informacion de los comentarios
                         this.reviews(link,pelicula_id);
 
+                        
+                        this.Crear_genero(document,pelicula_id);
+
 
                         ViewBag.men = $"trabajo realizado,|    {titulo_pelicula}    | cargada con exito ";
    
@@ -261,48 +265,20 @@ namespace tomates_podridos.Controllers
             
 
         }
-        //probar
-        /*public List<genero> Crear_genero(HtmlDocument document) 
-        {
-            
 
-            var generos_pelicula = this.datos_principales(document)[1];
-            List<string> data  = this.generos(generos_pelicula);
-            
-            foreach(string genero_ in data) 
-            {
 
-                if ( !(_context.genero.Any(x => x.Name == genero_))) 
-                {
-                       
-                }
-            }
 
-        }*/
-
-        public Pelicula crear(HtmlDocument document) 
-        {
-            Pelicula pelicula = new Pelicula();
-            pelicula.nombre = this.titulo_pelicula(document);
-            pelicula.img = this.img(document);
-            pelicula.calCritica = this.tomatometerscore(document);
-            pelicula.calAudiencia = this.audiencescore(document);
-            pelicula.plataformas = this.plataformas(document);
-            pelicula.synopsis = this.synopsis(document);
-            var datos = this.datos_principales(document);
-            pelicula.clasificacion = datos[0];
-            pelicula.equipoDir = datos[2];
-            pelicula.fecha = datos[3];
-            pelicula.duracion= datos[4];
-            pelicula.actores= this.actores(document);
-
-            return pelicula;
-        
-        }
 
         // web scraping
 
+
+
+
+
         //conexion
+
+
+
         HtmlDocument parse_html(string html)
         {
             HtmlDocument htmlDoc = new HtmlDocument();
@@ -319,7 +295,11 @@ namespace tomates_podridos.Controllers
         }
 
 
-        // datos datos pelicula
+
+
+
+
+        // datos pelicula
 
         public string audiencescore(HtmlDocument htmlDoc)
         {
@@ -429,6 +409,24 @@ namespace tomates_podridos.Controllers
             return lista;
         }
 
+        public string actores(HtmlDocument htmlDoc)
+        {
+            var reparto = htmlDoc.DocumentNode.Descendants("div")
+                .Where(node => node.ParentNode.GetAttributeValue("class", "").Contains("cast-and-crew-item ")).
+                ToList();
+
+            string Actores = "";
+
+            for (int i = 0; i < 5; i++)
+            {
+                var actual = reparto[i].InnerText.Trim();
+                Actores += "," + actual.Split("\n")[0].Trim();
+            }
+
+
+            return Actores.Substring(1);
+        }
+
         //pasar una lista con los generos de cada pelicula
         public List<string> generos(string data)
         {
@@ -449,29 +447,15 @@ namespace tomates_podridos.Controllers
             return retorno;
         }
 
-        public string actores(HtmlDocument htmlDoc)
-        {
-            var reparto = htmlDoc.DocumentNode.Descendants("div")
-                .Where(node => node.ParentNode.GetAttributeValue("class", "").Contains("cast-and-crew-item ")).
-                ToList();
-
-            string Actores = "";
-
-            for (int i = 0; i < 5; i++)
-            {
-                var actual = reparto[i].InnerText.Trim();
-                Actores += "," + actual.Split("\n")[0].Trim();
-            }
-
-
-            return Actores.Substring(1);
-        }
 
 
 
 
         //reviews
-        
+
+
+
+
         //se debe agregar  /review a la url al final
         public async void reviewCriticos(HtmlDocument htmlDoc,int id)
         {
@@ -484,14 +468,14 @@ namespace tomates_podridos.Controllers
                 .ToList();
 
             
-            for (int i = 0; i <= 3; i++)
+            for (int i = 0; i <= 2; i++)
             {
                 var critica_ = new ComentarioCritica();
                 critica_.Name = nombre[i].InnerText.Trim().Split("\n")[0].Trim();
                 critica_.Description = critica[i].InnerText.Trim().Split("\n")[0].Trim();
                 critica_.PeliculaId = id;
                 _context.ComentarioCritica.Add(critica_);
-                await _context.SaveChangesAsync();
+                _context.SaveChangesAsync();
 
             }
 
@@ -509,7 +493,7 @@ namespace tomates_podridos.Controllers
                 .Where(node => node.GetAttributeValue("class", "").Contains("review-data"))
                 .ToList();
 
-            for (int i = 0; i <= 3; i++)
+            for (int i = 0; i <= 2; i++)
             {
                 var critica_ = new ComentarioAudiencia();
                 critica_.Name = nombre[i].InnerText.Trim().Split("\n")[0].Trim();
@@ -528,8 +512,68 @@ namespace tomates_podridos.Controllers
 
 
 
+
+
+        // crear 
+
+        // se revisa que genero no existe en la tabla y se agrega
+        public async void Crear_genero(HtmlDocument document,int id_pelicula)
+        {
+
+            var generos_pelicula = this.datos_principales(document)[1];
+            List<string> data = this.generos(generos_pelicula);
+
+            foreach (string genero_ in data)
+            {
+                System.Threading.Thread.Sleep(5000);
+                if (!(_context.genero.Any(x => x.Name == genero_)))
+                {
+                    genero genero = new genero();
+                    genero.Name = genero_;
+
+                    _context.genero.Add(genero);
+                    _context.SaveChangesAsync();
+
+                }
+                
+            }
+            
+            this.CrearPeliculaGenero(this.Consultar_GeneroId(data),id_pelicula);
+           
+        }
+
+        //se crea un objeto pelicula
+        public Pelicula crear(HtmlDocument document)
+        {
+            Pelicula pelicula = new Pelicula();
+            pelicula.nombre = this.titulo_pelicula(document);
+            pelicula.img = this.img(document);
+            pelicula.calCritica = this.tomatometerscore(document);
+            pelicula.calAudiencia = this.audiencescore(document);
+            pelicula.plataformas = this.plataformas(document);
+            pelicula.synopsis = this.synopsis(document);
+            var datos = this.datos_principales(document);
+            pelicula.clasificacion = datos[0];
+            pelicula.equipoDir = datos[2];
+            pelicula.fecha = datos[3];
+            pelicula.duracion = datos[4];
+            pelicula.actores = this.actores(document);
+
+            return pelicula;
+
+        }
+
+
+
+
+
+        //referencias entre tablas
+
+
+
+
         //llama los metodos de review y sube a base de datos
-        public void reviews(string link,int id) 
+        public void reviews(string link, int id)
         {
             link += "/reviews";
 
@@ -547,6 +591,37 @@ namespace tomates_podridos.Controllers
 
 
         }
+
+
+        public List<int> Consultar_GeneroId(List<string> generos) 
+        
+        {
+            List<int> generos_id = new List<int>();
+            foreach(string genero in generos) 
+            {
+                generos_id.Add((from x in _context.genero where x.Name == genero select x.Id).FirstOrDefault()); 
+            }
+
+            return generos_id;
+        }
+
+
+        public async void CrearPeliculaGenero(List<int> id_genero,int id_pelicula) 
+        {
+            foreach(int id_ge in id_genero) 
+            {
+                Peliculagenero data = new Peliculagenero();
+                data.generoId = id_ge;
+                data.PeliculaId = id_pelicula;
+                _context.Peliculagenero.Add(data);
+                _context.SaveChangesAsync();
+            }
+        }
+
+
+
+
+
 
 
 

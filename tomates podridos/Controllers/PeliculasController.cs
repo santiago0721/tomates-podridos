@@ -83,6 +83,10 @@ namespace tomates_podridos.Controllers
             return View(pelicula);
         }
 
+
+
+
+
         // POST: Peliculas/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -117,6 +121,15 @@ namespace tomates_podridos.Controllers
             }
             return View(pelicula);
         }
+
+        
+        public async Task<IActionResult> info() 
+        {
+            return _context.Pelicula != null ?
+                          View(await _context.Pelicula.ToListAsync()) :
+                          Problem("Entity set 'tomates_podridosContext.Pelicula'  is null.");
+        }
+
 
         // GET: Peliculas/Delete/5
         public async Task<IActionResult> Delete(int? id)

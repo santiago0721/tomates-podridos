@@ -1,0 +1,56 @@
+﻿@model IEnumerable<tomates_podridos.Models.Pelicula>
+
+
+@{
+    ViewData["Title"] = "info";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.img)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.calCritica)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.calAudiencia)
+            </th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.nombre)
+                </td>
+                <td>
+                    <img src=@Html.DisplayFor(modelItem => item.img) width="100" height="120">
+
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.calCritica)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.calAudiencia)
+                </td>
+                
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

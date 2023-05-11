@@ -62,7 +62,7 @@ namespace tomates_podridos.Controllers
             {
                 _context.Add(cinefilo);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(menu));
+                return RedirectToAction(nameof(Index));
             }
             return View(cinefilo);
         }
@@ -160,31 +160,31 @@ namespace tomates_podridos.Controllers
           return (_context.Cinefilo?.Any(e => e.Id == id)).GetValueOrDefault();
         }
 
+        public IActionResult login()
 
-        public IActionResult login() 
-        
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Login(string name,string password)
+        public async Task<IActionResult> Login(string name, string password)
         {
 
             var validar = await _context.Cinefilo
-            .FirstOrDefaultAsync(m =>m.password== password && m.Name == name);
-            if (validar != null) 
-                {
+            .FirstOrDefaultAsync(m => m.password == password && m.Name == name);
+            if (validar != null)
+            {
                 ViewBag.Name = name;
                 ViewBag.Password = password;
-                return RedirectToAction(nameof(menu));
-            
+                return RedirectToAction("info","Peliculas");
+
             }
-            else 
-            { 
+            else
+            {
                 ViewBag.mensaje = "datos No validos";
-                return View(); }
-            
+                return View();
+            }
+
         }
 
 
@@ -193,8 +193,6 @@ namespace tomates_podridos.Controllers
         {
             return View();
         }
-
-
 
     }
 }

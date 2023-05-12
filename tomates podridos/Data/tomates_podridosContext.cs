@@ -27,5 +27,11 @@ namespace tomates_podridos.Data
         public DbSet<tomates_podridos.Models.Pelicula>? Pelicula { get; set; }
 
         public DbSet<tomates_podridos.Models.Peliculagenero>? Peliculagenero { get; set; }
+
+        public DbSet<tomates_podridos.Models.Show>? Show { get; set; }
+
+        public DbSet<tomates_podridos.Models.ComentarioAudiencia_show>? ComentarioAudiencia_show { get; set; }
+
+        public DbSet<tomates_podridos.Models.ComentarioCritica_show>? ComentarioCritica_show { get; set; }
     }
 }

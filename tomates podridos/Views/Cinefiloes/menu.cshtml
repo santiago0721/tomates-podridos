@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "menu";
     var lista_peliculas = ViewBag.peliculas;
+    var lista_shows = ViewBag.shows;
 }
 
 <h1>menu</h1>
@@ -57,6 +58,34 @@
                 </td>
             </tr>
         }
+
+        @foreach (var item in lista_shows)
+        {
+            <tr>
+                <td>
+                    @item.nombre
+                </td>
+                <td>
+                    <img src=@item.img width="100" height="120">
+
+                </td>
+                <td>
+                    @item.calCritica
+                </td>
+                <td>
+                    @item.calAudiencia
+                </td>
+
+
+                <td style="visibility:collapse; display:none;">
+                    @item.genero
+                </td>
+
+                <td>
+                    <a asp-controller="Shows" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
 
@@ -66,7 +95,7 @@
     var input2 = document.getElementById("filtro2");
     input2.addEventListener("keyup", FiltrarAudiencia);
     var input3 = document.getElementById("filtro3");
-    input3.addEventListener("keyup", Filtrar);
+    input3.addEventListener("keyup", FiltrarGenero);
 
 
     function Filtrarcritica()

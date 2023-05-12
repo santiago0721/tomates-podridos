@@ -1,0 +1,70 @@
+﻿@model tomates_podridos.Models.Show
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Show</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="nombre" class="control-label"></label>
+                <input asp-for="nombre" class="form-control" />
+                <span asp-validation-for="nombre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="img" class="control-label"></label>
+                <input asp-for="img" class="form-control" />
+                <span asp-validation-for="img" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="calCritica" class="control-label"></label>
+                <input asp-for="calCritica" class="form-control" />
+                <span asp-validation-for="calCritica" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="calAudiencia" class="control-label"></label>
+                <input asp-for="calAudiencia" class="form-control" />
+                <span asp-validation-for="calAudiencia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="plataformas" class="control-label"></label>
+                <input asp-for="plataformas" class="form-control" />
+                <span asp-validation-for="plataformas" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="produccion" class="control-label"></label>
+                <input asp-for="produccion" class="form-control" />
+                <span asp-validation-for="produccion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="fecha" class="control-label"></label>
+                <input asp-for="fecha" class="form-control" />
+                <span asp-validation-for="fecha" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="actores" class="control-label"></label>
+                <input asp-for="actores" class="form-control" />
+                <span asp-validation-for="actores" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="genero" class="control-label"></label>
+                <input asp-for="genero" class="form-control" />
+                <span asp-validation-for="genero" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

@@ -214,7 +214,7 @@ namespace tomates_podridos.Controllers
             catch (Exception)
             {
                 
-                ViewBag.men = "usta url no existe";
+                ViewBag.men = "esta url no existe";
                 return View();
             }
 
@@ -232,32 +232,58 @@ namespace tomates_podridos.Controllers
                 // url valida
                 if (ModelState.IsValid)
                 {
-                    var pelicula = this.crear(document);
-                    var validar = _context.Pelicula.Any(x => x.nombre == pelicula.nombre);
-                    
-                    if (validar) 
+                    if (link.Split("/")[3] == "tv") 
                     {
-                        ViewBag.men = "Ya existe en la base de datos";
+                        var show = this.crear_show(document);            
+                        var validar = _context.Show.Any(x => x.nombre == show.nombre);
+                        if (validar) 
+                        {
+                            ViewBag.men = "Ya existe en la base de datos";
+                        }
+                        else 
+                        {
+                            _context.Show.Add(show);
+                            await  _context.SaveChangesAsync();
+
+
+                            int show_id = show.Id;
+                            this.reviews_show(link, show_id);
+
+                            ViewBag.men = $"trabajo realizado,|   show cargado con exito    | cargada con exito ";
+
+                        }
                     }
-                    else 
+
+
+                    else
                     {
-                        _context.Add(pelicula);
-                        await _context.SaveChangesAsync();
+                        var pelicula = this.crear(document);
+                        var validar = _context.Pelicula.Any(x => x.nombre == pelicula.nombre);
 
-                        int pelicula_id = pelicula.Id;
+                        if (validar)
+                        {
+                            ViewBag.men = "Ya existe en la base de datos";
+                        }
+                        else
+                        {
+                            _context.Add(pelicula);
+                            await _context.SaveChangesAsync();
 
-                        //se invoca reviews para cargar esta informacion de los comentarios
-                        this.reviews(link,pelicula_id);
+                            int pelicula_id = pelicula.Id;
 
-                        
-                        this.Crear_genero(document,pelicula_id);
+                            //se invoca reviews para cargar esta informacion de los comentarios
+                            this.reviews(link, pelicula_id);
 
 
-                        ViewBag.men = $"trabajo realizado,|    {titulo_pelicula}    | cargada con exito ";
-   
+                            this.Crear_genero(document, pelicula_id);
+
+
+                            ViewBag.men = $"trabajo realizado,|    {titulo_pelicula}    | cargada con exito ";
+
+                        }
+                       
                     }
                     return View();
-
                 }
                 ViewBag.men = $"no es valido,|    {titulo_pelicula}    | pailasssss";
                 return View();
@@ -267,6 +293,15 @@ namespace tomates_podridos.Controllers
         }
 
 
+
+
+
+
+        public IActionResult tops()
+
+        {
+            return View();
+        }
 
 
         // web scraping
@@ -510,7 +545,57 @@ namespace tomates_podridos.Controllers
         }
 
 
+        public async void reviewCriticos_show(HtmlDocument htmlDoc, int id)
+        {
+            var critica = htmlDoc.DocumentNode.Descendants("div")
+                .Where(node => node.GetAttributeValue("class", "").Contains("review-text"))
+                .ToList();
 
+            var nombre = htmlDoc.DocumentNode.Descendants("div")
+                .Where(node => node.GetAttributeValue("class", "").Contains("reviewer-name-and-publication"))
+                .ToList();
+
+
+            for (int i = 0; i <= 2; i++)
+            {
+                var critica_ = new ComentarioCritica_show();
+                critica_.Name = nombre[i].InnerText.Trim().Split("\n")[0].Trim();
+                critica_.Description = critica[i].InnerText.Trim().Split("\n")[0].Trim();
+                critica_.ShowId = id;
+                _context.ComentarioCritica_show.Add(critica_);
+                _context.SaveChangesAsync();
+
+            }
+
+
+        }
+
+
+        public async void reviewAudiencia_show(HtmlDocument htmlDoc, int id)
+        {
+            var critica = htmlDoc.DocumentNode.Descendants("p")
+                .Where(node => node.GetAttributeValue("data-qa", "").Contains("review-text"))
+                .ToList();
+
+            var nombre = htmlDoc.DocumentNode.Descendants("div")
+                .Where(node => node.GetAttributeValue("class", "").Contains("review-data"))
+                .ToList();
+
+            for (int i = 0; i <= 2; i++)
+            {
+                var critica_ = new ComentarioAudiencia_show();
+                critica_.Name = nombre[i].InnerText.Trim().Split("\n")[0].Trim();
+                critica_.Description = critica[i].InnerText.Trim().Split("\n")[0].Trim();
+                critica_.ShowId = id;
+                _context.ComentarioAudiencia_show.Add(critica_);
+                _context.SaveChangesAsync();
+
+
+
+            }
+
+
+        }
 
 
 
@@ -565,6 +650,27 @@ namespace tomates_podridos.Controllers
         }
 
 
+        public Show crear_show(HtmlDocument document) 
+        {
+            Show show = new Show();
+            show.nombre = this.titulo_show(document);
+            show.img = this.img(document);
+            show.calCritica = this.tomatometerscore(document);
+            show.calAudiencia = this.audiencescore(document);
+            show.plataformas = this.plataformas(document);
+
+            List<String> datos_principales = this.datos_principales_show(document);
+            show.produccion = datos_principales[2];
+            show.fecha = datos_principales[0];
+            show.actores = this.actores(document);
+            show.genero = datos_principales[1];
+
+
+            return show;
+        
+        }
+
+
 
 
 
@@ -592,6 +698,31 @@ namespace tomates_podridos.Controllers
 
 
         }
+
+
+        public void reviews_show(string link, int id)
+        {
+            link += "/reviews";
+
+            var Response = this.call_url(link).Result;
+            HtmlDocument document = this.parse_html(Response);
+
+            this.reviewCriticos_show(document, id);
+
+            link += "?type=user";
+
+            Response = this.call_url(link).Result;
+            document = this.parse_html(Response);
+
+            this.reviewAudiencia_show(document, id);
+
+
+        }
+
+
+
+
+
 
 
         public List<int> Consultar_GeneroId(List<string> generos) 
@@ -622,7 +753,60 @@ namespace tomates_podridos.Controllers
 
 
 
+        //show 
 
+
+        public string titulo_show(HtmlDocument htmlDoc)
+        {
+            var nombre_pelicula = htmlDoc.DocumentNode.Descendants("img")
+                .Where(node => node.ParentNode.GetAttributeValue("class", "").Contains("thumbnail")).
+                ToList().First().GetAttributeValue("alt", " ")[..^12];
+
+            return nombre_pelicula;
+        }
+
+        public List<string> datos_principales_show(HtmlDocument htmlDoc)
+
+        {
+            string genero = "none";
+            string Premiere_date = "none";
+            string Executive_producers = "none";
+
+
+            var info_central_ = htmlDoc.DocumentNode.Descendants("li")
+                .Where(node => node.GetAttributeValue("class", "").Contains("info-item")).ToList();
+
+
+
+            foreach (var node in info_central_)
+            {
+                if (!(node == info_central_[0]))
+                {
+                    var titulo = node.Descendants("b").Where(node => node.GetAttributeValue("class", "")
+                    .Contains("info-item-label")).ToList().First().InnerText;
+
+
+                    var valor = node.Descendants("span").Where(node => node.GetAttributeValue("class", "")
+                    .Contains("info-item-value")).ToList().First().InnerText;
+
+                    if (titulo == "Premiere Date:") { Premiere_date = valor.Trim(); }
+
+                    else if (titulo == "Executive producers:") { Executive_producers = valor.Trim(); }
+                }
+                else
+                {
+                    genero = node.Descendants("span").Where(node => node.GetAttributeValue("class", "")
+                    .Contains("info-item-value")).ToList().First().InnerText.Trim();
+                }
+            }
+
+            Console.WriteLine(Premiere_date);
+            Console.WriteLine(genero);
+            Console.WriteLine(Executive_producers);
+
+            List<string> lista = new List<string>() { Premiere_date, genero, Executive_producers };
+            return lista;
+        }
 
 
 

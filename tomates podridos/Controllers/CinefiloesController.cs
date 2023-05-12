@@ -192,7 +192,9 @@ namespace tomates_podridos.Controllers
 
         {
             List<Pelicula> lista_peliculas = this.Buscar_peliculas();
+            List<Show> lista_shows = this.Buscar_shows();
             ViewBag.peliculas = lista_peliculas;
+            ViewBag.Shows = lista_shows;
             ViewBag.self = this;
             return View();
         }
@@ -228,6 +230,19 @@ namespace tomates_podridos.Controllers
             {
                 return consulta.ToList();
             }
+        }
+
+        public List<Show> Buscar_shows() 
+        {
+            var consulta = from c in _context.Show select c;
+
+            if (consulta.Count() == 0) { return null; }
+
+            else
+            {
+                return consulta.ToList();
+            }
+
         }
 
     }

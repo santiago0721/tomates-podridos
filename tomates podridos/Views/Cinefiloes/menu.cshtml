@@ -6,7 +6,11 @@
 
 <h1>menu</h1>
 
-<table class="table">
+<input type="text" id="filtro1" placeholder="filtro por critica" />
+<input type="text" id="filtro2" placeholder="filtro por audiencia" />
+<input type="text" id="filtro3" placeholder="filtro por genero" />
+
+<table class="table" id="tabla">
     <thead>
         <tr>
             <th>
@@ -16,11 +20,12 @@
                 img
             </th>
             <th>
-                calCritica
+                calificacion Critica
             </th>
             <th>
-                calAudiencia
+                calificacion Audiencia
             </th>
+            
 
         </tr>
     </thead>
@@ -42,6 +47,11 @@
                     @item.calAudiencia
                 </td>
 
+                
+                <td style="visibility:collapse; display:none;">
+                    @ViewBag.self.mandar_genero(item.Id)
+                </td>
+
                 <td>
                     <a asp-controller="peliculas" asp-action="Details" asp-route-id="@item.Id">Details</a>
                 </td>
@@ -49,3 +59,77 @@
         }
     </tbody>
 </table>
+
+<script>
+    var input1 = document.getElementById("filtro1");
+    input1.addEventListener("keyup",Filtrarcritica);
+    var input2 = document.getElementById("filtro2");
+    input2.addEventListener("keyup", FiltrarAudiencia);
+    var input3 = document.getElementById("filtro3");
+    input3.addEventListener("keyup", Filtrar);
+
+
+    function Filtrarcritica()
+    {
+        var filtro = input1.value;
+        var tabla = document.getElementById("tabla");
+        var filas = tabla.getElementsByTagName("tr");
+        for (var i= 0; i< filas.length;i++) 
+        {
+            var celda = filas[i].getElementsByTagName("td")[2];
+            if (celda)
+            {
+                var valor = celda.textContent;
+                if (valor.indexOf(filtro) > -1 )
+                {
+                    filas[i].style.display = "";
+                }
+                else
+                {
+                    filas[i].style.display = "none";
+                }
+            }
+            
+        }
+    }
+    function FiltrarAudiencia() {
+        var filtro = input2.value;
+        var tabla = document.getElementById("tabla");
+        var filas = tabla.getElementsByTagName("tr");
+        for (var i = 0; i < filas.length; i++) {
+            var celda = filas[i].getElementsByTagName("td")[3];
+            if (celda) {
+                var valor = celda.textContent;
+                if (valor.indexOf(filtro) > -1) {
+                    filas[i].style.display = "";
+                }
+                else {
+                    filas[i].style.display = "none";
+                }
+            }
+
+        }
+    }
+
+    function FiltrarGenero() {
+        var filtro = input3.value;
+        var tabla = document.getElementById("tabla");
+        var filas = tabla.getElementsByTagName("tr");
+        for (var i = 0; i < filas.length; i++) {
+            var celda = filas[i].getElementsByTagName("td")[4];
+            if (celda) {
+                var valor = celda.textContent;
+                if (valor.indexOf(filtro) > -1) {
+                    filas[i].style.display = "";
+                }
+                else {
+                    filas[i].style.display = "none";
+                }
+            }
+
+        }
+    }
+
+
+
+</script>

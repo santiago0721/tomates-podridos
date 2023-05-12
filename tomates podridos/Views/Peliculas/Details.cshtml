@@ -7,86 +7,91 @@
 <h1>Details</h1>
 
 <div>
- 
-    <h4>Pelicula</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.nombre)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.nombre)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.img)
-        </dt>
-        <dd class = "col-sm-10">
-            <img src=@Html.DisplayFor(model => model.img) width="100" height="120">
-            @Html.DisplayFor(model => model.img)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.calCritica)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.calCritica)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.calAudiencia)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.calAudiencia)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.plataformas)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.plataformas)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.synopsis)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.synopsis)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.clasificacion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.clasificacion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.equipoDir)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.equipoDir)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.fecha)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.fecha)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.duracion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.duracion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.actores)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.actores)
-        </dd>
-         <dt class = "col-sm-2">
-            generos
-        </dt>
-        <dd class = "col-sm-10">
-            @ViewBag.generos
-        </dd>
+    <div>
+        <h4>Pelicula</h4>
+        <hr />
+        <dl class="row">
+            <div class="col-md-4">
+                <div class="img_total">
+                    <img src=@Html.DisplayFor(model => model.img)>
 
-
+                </div>
+            </div>
+            <div class="col-md-8">
+            
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.nombre)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.nombre)
+                </dd>
+        
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.calCritica)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.calCritica)
+                </dd>
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.calAudiencia)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.calAudiencia)
+                </dd>
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.plataformas)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.plataformas)
+                </dd>
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.synopsis)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.synopsis)
+                </dd>
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.clasificacion)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.clasificacion)
+                </dd>
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.equipoDir)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.equipoDir)
+                </dd>
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.fecha)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.fecha)
+                </dd>
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.duracion)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.duracion)
+                </dd>
+                <dt class = "col-sm-2">
+                    @Html.DisplayNameFor(model => model.actores)
+                </dt>
+                <dd class = "col-sm-10">
+                    @Html.DisplayFor(model => model.actores)
+                </dd>
+                 <dt class = "col-sm-2">
+                    generos
+                </dt>
+                <dd class = "col-sm-10">
+                    @ViewBag.generos
+                </dd>
+           
+        </div>
+    </div>
     </dl>
+    </div>
+
 
     <h4>comentarios audiencia</h4>
     <dl class="row">
@@ -121,3 +126,23 @@
     </dl>
 
 </div>
+
+<style>
+    .img_total
+    
+    {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 300px;
+        border: 1px solid #ccc;
+        padding: 10px;
+
+    }
+
+    img {
+        max-height: 100%;
+        max-width: 100%;
+    }
+
+</style>

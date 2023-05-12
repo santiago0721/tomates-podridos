@@ -193,10 +193,29 @@ namespace tomates_podridos.Controllers
         {
             List<Pelicula> lista_peliculas = this.Buscar_peliculas();
             ViewBag.peliculas = lista_peliculas;
+            ViewBag.self = this;
             return View();
         }
 
 
+        public string mandar_genero(int? id)
+        {
+            var consulta = (from p in _context.Peliculagenero where p.PeliculaId == id select p.generoId);
+
+            if (consulta.Count() == 0) { return null; }
+
+
+            var resultado = consulta.ToList();
+            string generos = "";
+            foreach (int genero in resultado)
+            {
+                generos += (from g in _context.genero where g.Id == genero select g.Name).FirstAsync().Result + "--";
+            }
+
+            return generos[..^2];
+
+
+        }
 
 
         public List<Pelicula> Buscar_peliculas() 

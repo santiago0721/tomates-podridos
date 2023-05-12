@@ -300,7 +300,20 @@ namespace tomates_podridos.Controllers
         public IActionResult tops()
 
         {
-            return View();
+            
+            var Response = this.call_url("https://www.rottentomatoes.com").Result;
+            var document = this.parse_html(Response);
+            var lista_links = this.links(document);
+
+
+            var peliculas = this.PeliculasTop(lista_links[0]);
+            var shows = this.ShowsTop(lista_links[1]);
+            this.ExisteShow(shows);
+           
+
+
+
+                return View();
         }
 
         
@@ -407,7 +420,11 @@ namespace tomates_podridos.Controllers
 
             }
 
-            return total[..^1];
+
+            if (total == "") 
+            { return total; }
+            else { return total[..^1]; }
+            
         }
 
         public List<string> datos_principales(HtmlDocument htmlDoc)
@@ -814,6 +831,138 @@ namespace tomates_podridos.Controllers
 
 
 
+        // tops
+
+        //retorna una lista de dos listas
+        //la primera lista tiene los links de los tops de peliculas ----- la segunda tops de shows
+
+
+        public List<List<string>> links(HtmlDocument htmlDoc)
+        {
+            var datos = htmlDoc.DocumentNode.Descendants("ul")
+                .Where(node => node.GetAttributeValue("slot", "").Contains("list-items"))
+                .ToList();
+
+
+            var peliculas = datos[0].Descendants("li").ToList();
+            var shows = datos[1].Descendants("li").ToList();
+
+            List<string> links_peliculas = new List<string>();
+            List<string> links_shows = new List<string>();
+            List<List<string>> links_ = new List<List<string>>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                var link_pelicula = peliculas[i].Descendants("a")
+                .Where(node => node.GetAttributeValue("class", "").Contains("dynamic-text-list__tomatometer-group"))
+                .ToList().First().GetAttributeValue("href", " ");
+
+                links_peliculas.Add(link_pelicula);
+
+                var link_show = shows[i].Descendants("a")
+                .Where(node => node.GetAttributeValue("class", "").Contains("dynamic-text-list__tomatometer-group"))
+                .ToList().First().GetAttributeValue("href", " ");
+
+                links_shows.Add(link_show);
+            }
+
+
+            links_.Add(links_peliculas);
+            links_.Add(links_shows);
+
+            return links_;
+
+        }
+
+
+
+
+        public List<Pelicula> PeliculasTop(List<string> links) 
+        {
+        List<Pelicula> top = new List<Pelicula>();
+
+            foreach (var link in links) 
+            {
+                var link_completo = "https://www.rottentomatoes.com" + link;
+                var Response = this.call_url(link_completo).Result;
+                var document = this.parse_html(Response);
+                var peli = this.crear(document);
+                top.Add(peli);
+            }
+            return top;
+        }
+
+        public List<Show> ShowsTop(List<string> links)
+        {
+            List<Show> top = new List<Show>();
+
+            foreach (var link in links)
+            {
+                var link_completo = "https://www.rottentomatoes.com/" + link;
+                var Response = this.call_url(link_completo).Result;
+                var document = this.parse_html(Response);
+                var peli = this.crear_show(document);
+                top.Add(peli);
+            }
+            return top;
+        }
+
+
+        // recibe los tops de peliculas y los que no existen los agrega a la base de datos
+        public async Task ExistePelicula(List<Pelicula> peliculas) 
+        {
+            foreach(var peli in peliculas) 
+            {
+                var respuesta = _context.Pelicula.Any(x => x.nombre == peli.nombre);
+                if (!(respuesta)) 
+                {
+                    _context.Pelicula.Add(peli);
+                    await _context.SaveChangesAsync();
+                }
+            }
+        
+        }
+
+        public async Task ExisteShow(List<Show> shows)
+        {
+            foreach (var show_ in shows)
+            {
+                var respuesta = _context.Show.Any(x => x.nombre == show_.nombre);
+                if (!(respuesta))
+                {
+                    _context.Show.Add(show_);
+                    await _context.SaveChangesAsync();
+                }
+
+                topsShows top = new topsShows();
+                top.ShowId = show_.Id;
+                _context.topsShows.Add(top);
+                await _context.SaveChangesAsync();
+            }
+
+        }
+
+
+        public async Task guardar_datos(List<Pelicula> peliculas,List<Show> shows) 
+        {
+            foreach(var peli in peliculas) 
+            {
+                topsPelicula top = new topsPelicula();
+                top.PeliculaId = peli.Id;
+                _context.topsPelicula.Add(top);
+                await _context.SaveChangesAsync();
+
+            }
+
+            foreach(var show_ in shows) 
+            {
+                topsShows top = new topsShows();
+                top.ShowId = show_.Id;
+                _context.topsShows.Add(top);
+                await _context.SaveChangesAsync();
+            }
+        
+        }
 
     }
 }

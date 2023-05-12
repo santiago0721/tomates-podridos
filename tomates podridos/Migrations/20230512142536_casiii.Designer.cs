@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using tomates_podridos.Data;
 
@@ -10,9 +11,10 @@ using tomates_podridos.Data;
 namespace tomates_podridos.Migrations
 {
     [DbContext(typeof(tomates_podridosContext))]
-    partial class tomates_podridosContextModelSnapshot : ModelSnapshot
+    [Migration("20230512142536_casiii")]
+    partial class casiii
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

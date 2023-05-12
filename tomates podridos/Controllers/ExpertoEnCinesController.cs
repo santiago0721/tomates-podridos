@@ -306,11 +306,10 @@ namespace tomates_podridos.Controllers
             var lista_links = this.links(document);
 
 
-            var peliculas = this.PeliculasTop(lista_links[0]);
-            var shows = this.ShowsTop(lista_links[1]);
-            this.ExisteShow(shows);
+            this.PeliculasTop(lista_links[0]);
+            this.ShowsTop(lista_links[1]);
+            
            
-
 
 
                 return View();
@@ -877,9 +876,8 @@ namespace tomates_podridos.Controllers
 
 
 
-        public List<Pelicula> PeliculasTop(List<string> links) 
+        public async Task PeliculasTop(List<string> links) 
         {
-        List<Pelicula> top = new List<Pelicula>();
 
             foreach (var link in links) 
             {
@@ -887,82 +885,73 @@ namespace tomates_podridos.Controllers
                 var Response = this.call_url(link_completo).Result;
                 var document = this.parse_html(Response);
                 var peli = this.crear(document);
-                top.Add(peli);
+                var respuesta = _context.Pelicula.Any(x => x.nombre == peli.nombre);
+                if ((respuesta))
+                {
+                    _context.Pelicula.Add(peli);
+                    _context.SaveChangesAsync();
+
+                    int pelicula_id = peli.Id;
+
+                   
+                    this.reviews(link_completo, pelicula_id);
+
+                    this.Crear_genero(document, pelicula_id);
+
+                }
+                topsPelicula top = new topsPelicula();
+                top.PeliculaId = peli.Id;
+                _context.topsPelicula.Add(top);
+                _context.SaveChangesAsync();
             }
-            return top;
         }
 
-        public List<Show> ShowsTop(List<string> links)
+        public async Task ShowsTop(List<string> links)
         {
-            List<Show> top = new List<Show>();
+            
 
             foreach (var link in links)
             {
+
                 var link_completo = "https://www.rottentomatoes.com/" + link;
                 var Response = this.call_url(link_completo).Result;
                 var document = this.parse_html(Response);
-                var peli = this.crear_show(document);
-                top.Add(peli);
+                var show_ = this.crear_show(document);
+                
+                var respuesta = _context.Show.Any(x => x.nombre == show_.nombre);
+                if ((respuesta)) 
+                {
+                    _context.Show.Add(show_);
+                    _context.SaveChangesAsync();
+
+                    int show_id = show_.Id;
+
+                    this.reviews_show(link_completo,show_id);
+                }
+                topsShows top = new topsShows();
+                top.ShowId = show_.Id;
+                _context.topsShows.Add(top);
+                _context.SaveChangesAsync();
+
             }
-            return top;
+
+
+            }
+          
         }
 
 
         // recibe los tops de peliculas y los que no existen los agrega a la base de datos
-        public async Task ExistePelicula(List<Pelicula> peliculas) 
-        {
-            foreach(var peli in peliculas) 
-            {
-                var respuesta = _context.Pelicula.Any(x => x.nombre == peli.nombre);
-                if (!(respuesta)) 
-                {
-                    _context.Pelicula.Add(peli);
-                    await _context.SaveChangesAsync();
-                }
-            }
         
-        }
-
-        public async Task ExisteShow(List<Show> shows)
-        {
-            foreach (var show_ in shows)
-            {
-                var respuesta = _context.Show.Any(x => x.nombre == show_.nombre);
-                if (!(respuesta))
-                {
-                    _context.Show.Add(show_);
-                    await _context.SaveChangesAsync();
-                }
-
-                topsShows top = new topsShows();
-                top.ShowId = show_.Id;
-                _context.topsShows.Add(top);
-                await _context.SaveChangesAsync();
-            }
-
-        }
 
 
-        public async Task guardar_datos(List<Pelicula> peliculas,List<Show> shows) 
-        {
-            foreach(var peli in peliculas) 
-            {
-                topsPelicula top = new topsPelicula();
-                top.PeliculaId = peli.Id;
-                _context.topsPelicula.Add(top);
-                await _context.SaveChangesAsync();
 
-            }
 
-            foreach(var show_ in shows) 
-            {
-                topsShows top = new topsShows();
-                top.ShowId = show_.Id;
-                _context.topsShows.Add(top);
-                await _context.SaveChangesAsync();
-            }
+
         
-        }
+
+
+       
 
     }
-}
+

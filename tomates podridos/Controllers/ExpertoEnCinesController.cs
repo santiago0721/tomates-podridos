@@ -537,7 +537,8 @@ namespace tomates_podridos.Controllers
                 }
                 
             }
-            
+            System.Threading.Thread.Sleep(5000);
+
             this.CrearPeliculaGenero(this.Consultar_GeneroId(data),id_pelicula);
            
         }
@@ -597,6 +598,7 @@ namespace tomates_podridos.Controllers
         
         {
             List<int> generos_id = new List<int>();
+
             foreach(string genero in generos) 
             {
                 generos_id.Add((from x in _context.genero where x.Name == genero select x.Id).FirstOrDefault()); 

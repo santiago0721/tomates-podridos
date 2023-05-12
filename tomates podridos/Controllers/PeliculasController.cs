@@ -42,7 +42,78 @@ namespace tomates_podridos.Controllers
                 return NotFound();
             }
 
+            ViewBag.generos = this.mandar_genero(id);
+            ViewBag.audiencia = this.mandar_audiencia(id);
+            ViewBag.critica = this.mandar_crtitica(id); 
             return View(pelicula);
+        }
+
+
+
+        //cargar los datos de las otras tablas
+        public string mandar_genero(int? id) 
+        {
+            var consulta =  (from p in _context.Peliculagenero where p.PeliculaId == id select p.generoId);
+
+            if (consulta.Count() == 0) { return null; }
+
+           
+            var resultado = consulta.ToList();
+            string generos = "";
+            foreach( int genero in resultado) 
+            {
+                generos += (from g in _context.genero where g.Id == genero select g.Name).FirstAsync().Result + "--";
+            }
+
+            return generos[..^2];
+
+
+        }
+
+
+        public List<List<string>> mandar_crtitica(int? id)
+        {
+            var consulta = (from p in _context.ComentarioCritica where p.PeliculaId == id select p);
+
+            if (consulta.Count() == 0) { return null; }
+
+            List<List<string>> critica = new List<List<string>>();
+            
+            foreach (ComentarioCritica critica_ in consulta)
+            {
+                List<string> aux = new List<string>();
+                aux.Add(critica_.Name);
+                aux.Add(critica_.Description);
+                critica.Add(aux);
+
+            }
+
+            return critica;
+
+
+        }
+
+        public List<List<string>> mandar_audiencia(int? id)
+        {
+
+            var consulta = (from p in _context.ComentarioAudiencia where p.PeliculaId == id select p);
+
+            if (consulta.Count() == 0) { return null; }
+
+            List<List<string>> audiencia = new List<List<string>>();
+
+            foreach (ComentarioAudiencia critica_ in consulta)
+            {
+                List<string> aux = new List<string>();
+                aux.Add(critica_.Name);
+                aux.Add(critica_.Description);
+                audiencia.Add(aux);
+
+            }
+
+            return audiencia;
+
+
         }
 
         // GET: Peliculas/Create

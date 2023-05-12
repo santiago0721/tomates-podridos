@@ -176,7 +176,7 @@ namespace tomates_podridos.Controllers
             {
                 ViewBag.Name = name;
                 ViewBag.Password = password;
-                return RedirectToAction("info","Peliculas");
+                return RedirectToAction(nameof(menu));
 
             }
             else
@@ -191,7 +191,24 @@ namespace tomates_podridos.Controllers
         public IActionResult menu()
 
         {
+            List<Pelicula> lista_peliculas = this.Buscar_peliculas();
+            ViewBag.peliculas = lista_peliculas;
             return View();
+        }
+
+
+
+
+        public List<Pelicula> Buscar_peliculas() 
+        {
+            var consulta = from c in _context.Pelicula select c;
+
+            if (consulta.Count() == 0) { return null; }
+
+            else
+            {
+                return consulta.ToList();
+            }
         }
 
     }

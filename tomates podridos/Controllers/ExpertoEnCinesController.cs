@@ -306,8 +306,9 @@ namespace tomates_podridos.Controllers
             var lista_links = this.links(document);
 
 
+            this.Eliminar_tops();
             this.PeliculasTop(lista_links[0]);
-            this.ShowsTop(lista_links[1]);
+            this.ShowsTop_(lista_links[1]);
             
            
 
@@ -472,7 +473,7 @@ namespace tomates_podridos.Controllers
 
             string Actores = "";
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 3; i++)
             {
                 var actual = reparto[i].InnerText.Trim();
                 Actores += "," + actual.Split("\n")[0].Trim();
@@ -876,72 +877,119 @@ namespace tomates_podridos.Controllers
 
 
 
-        public async Task PeliculasTop(List<string> links) 
+        public void PeliculasTop(List<string> links) 
         {
 
             foreach (var link in links) 
             {
+                int id;
                 var link_completo = "https://www.rottentomatoes.com" + link;
                 var Response = this.call_url(link_completo).Result;
                 var document = this.parse_html(Response);
                 var peli = this.crear(document);
                 var respuesta = _context.Pelicula.Any(x => x.nombre == peli.nombre);
-                if ((respuesta))
+                if (respuesta)
+                {
+
+                    id = (from x in _context.Pelicula where x.nombre == peli.nombre select x.Id).FirstOrDefault();
+
+
+                }
+                else 
                 {
                     _context.Pelicula.Add(peli);
                     _context.SaveChangesAsync();
+                    System.Threading.Thread.Sleep(1000);
 
-                    int pelicula_id = peli.Id;
+                    id = (from x in _context.Pelicula where x.nombre == peli.nombre select x.Id).FirstOrDefault();
 
-                   
-                    this.reviews(link_completo, pelicula_id);
+                    this.reviews(link_completo, id);
 
-                    this.Crear_genero(document, pelicula_id);
+                    this.Crear_genero(document, id);
 
                 }
+
                 topsPelicula top = new topsPelicula();
-                top.PeliculaId = peli.Id;
+                top.PeliculaId = id;
                 _context.topsPelicula.Add(top);
                 _context.SaveChangesAsync();
             }
         }
 
-        public async Task ShowsTop(List<string> links)
+        
+        public void Eliminar_tops() 
         {
+
+            var consulta = from c in _context.topsPelicula select c;
+
+            if (consulta.Count() != 0) 
+            {
+                foreach(var pelicula in consulta) 
+                {
+                _context.topsPelicula.Remove(pelicula);
+                }
             
+            }
+
+            var shows = from k in _context.topsShows select k;
+
+            if (shows.Count() != 0)
+            {
+                foreach (var show in shows)
+                {
+                    _context.topsShows.Remove(show);
+                }
+            }
+
+        }
+        
+
+        public void ShowsTop_(List<string> links)
+        {
 
             foreach (var link in links)
             {
-
+                int id;
                 var link_completo = "https://www.rottentomatoes.com/" + link;
                 var Response = this.call_url(link_completo).Result;
                 var document = this.parse_html(Response);
                 var show_ = this.crear_show(document);
-                
-                var respuesta = _context.Show.Any(x => x.nombre == show_.nombre);
-                if ((respuesta)) 
+
+                var validar = _context.Show.Any(x => x.nombre == show_.nombre);
+                if (validar) 
+                {
+                    id = (from x in _context.Show where x.nombre == show_.nombre select x.Id).FirstOrDefault();
+                }
+                else 
                 {
                     _context.Show.Add(show_);
                     _context.SaveChangesAsync();
 
-                    int show_id = show_.Id;
-
-                    this.reviews_show(link_completo,show_id);
+                    System.Threading.Thread.Sleep(1000);
+                    id = (from x in _context.Show where x.nombre == show_.nombre select x.Id).FirstOrDefault();
+                    this.reviews_show(link_completo, id);
                 }
+
                 topsShows top = new topsShows();
-                top.ShowId = show_.Id;
+                top.ShowId = id;
                 _context.topsShows.Add(top);
                 _context.SaveChangesAsync();
 
-            }
-
 
             }
-          
+
+            
+
         }
 
 
-        // recibe los tops de peliculas y los que no existen los agrega a la base de datos
+
+        }
+
+    }
+
+
+       
         
 
 
@@ -953,5 +1001,5 @@ namespace tomates_podridos.Controllers
 
        
 
-    }
+    
 

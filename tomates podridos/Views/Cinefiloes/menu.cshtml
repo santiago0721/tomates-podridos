@@ -3,13 +3,18 @@
     ViewData["Title"] = "menu";
     var lista_peliculas = ViewBag.peliculas;
     var lista_shows = ViewBag.shows;
+    var lista_peliculas_tops = ViewBag.peliculas_tops;
+    var lista_shows_tops = ViewBag.shows_tops;
+
+
 }
 
 <h1>menu</h1>
 
-<input type="text" id="filtro1" placeholder="filtro por critica" />
-<input type="text" id="filtro2" placeholder="filtro por audiencia" />
+
 <input type="text" id="filtro3" placeholder="filtro por genero" />
+<button id="sortButton">Ordenar por calificacion critica</button>
+<button id="sortButton_2">Ordenar por calificacion audiencia</button>
 
 <table class="table" id="tabla">
     <thead>
@@ -89,56 +94,139 @@
     </tbody>
 </table>
 
+
+
+
+@if(lista_peliculas_tops != null)
+{
+
+    <h1>top pelicula </h1>
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    nombre
+                </th>
+                <th>
+                    img
+                </th>
+                <th>
+                    calificacion Critica
+                </th>
+                <th>
+                    calificacion Audiencia
+                </th>
+
+
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in lista_peliculas_tops)
+            {
+                <tr>
+                    <td>
+                        @item.nombre
+                    </td>
+                    <td>
+                        <img src=@item.img width="100" height="120">
+
+                    </td>
+                    <td>
+                        @item.calCritica
+                    </td>
+                    <td>
+                        @item.calAudiencia
+                    </td>
+
+
+                    <td style="visibility:collapse; display:none;">
+                        @ViewBag.self.mandar_genero(item.Id)
+                    </td>
+
+                    <td>
+                        <a asp-controller="peliculas" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+
+    </table>
+
+}
+
+
+
+
+@if (lista_shows_tops != null)
+{
+    <h1>top shows </h1>
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    nombre
+                </th>
+                <th>
+                    img
+                </th>
+                <th>
+                    calificacion Critica
+                </th>
+                <th>
+                    calificacion Audiencia
+                </th>
+
+
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in lista_shows_tops)
+            {
+                <tr>
+                    <td>
+                        @item.nombre
+                    </td>
+                    <td>
+                        <img src=@item.img width="100" height="120">
+
+                    </td>
+                    <td>
+                        @item.calCritica
+                    </td>
+                    <td>
+                        @item.calAudiencia
+                    </td>
+
+
+                    <td style="visibility:collapse; display:none;">
+                        @ViewBag.self.mandar_genero(item.Id)
+                    </td>
+
+                    <td>
+                        <a asp-controller="shows" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+
+    </table>
+
+}
+
+
+
+
+
+
+
 <script>
-    var input1 = document.getElementById("filtro1");
-    input1.addEventListener("keyup",Filtrarcritica);
-    var input2 = document.getElementById("filtro2");
-    input2.addEventListener("keyup", FiltrarAudiencia);
     var input3 = document.getElementById("filtro3");
     input3.addEventListener("keyup", FiltrarGenero);
 
-
-    function Filtrarcritica()
-    {
-        var filtro = input1.value;
-        var tabla = document.getElementById("tabla");
-        var filas = tabla.getElementsByTagName("tr");
-        for (var i= 0; i< filas.length;i++) 
-        {
-            var celda = filas[i].getElementsByTagName("td")[2];
-            if (celda)
-            {
-                var valor = celda.textContent;
-                if (valor.indexOf(filtro) > -1 )
-                {
-                    filas[i].style.display = "";
-                }
-                else
-                {
-                    filas[i].style.display = "none";
-                }
-            }
-            
-        }
-    }
-    function FiltrarAudiencia() {
-        var filtro = input2.value;
-        var tabla = document.getElementById("tabla");
-        var filas = tabla.getElementsByTagName("tr");
-        for (var i = 0; i < filas.length; i++) {
-            var celda = filas[i].getElementsByTagName("td")[3];
-            if (celda) {
-                var valor = celda.textContent;
-                if (valor.indexOf(filtro) > -1) {
-                    filas[i].style.display = "";
-                }
-                else {
-                    filas[i].style.display = "none";
-                }
-            }
-
-        }
-    }
 
     function FiltrarGenero() {
         var filtro = input3.value;
@@ -160,5 +248,81 @@
     }
 
 
+    var ascending = true; // Bandera para alternar entre orden ascendente y descendente
+
+    // Obtener referencia a la tabla
+    var table = document.getElementById("tabla");
+
+    // Obtener referencia al botón
+    var sortButton = document.getElementById("sortButton");
+    var sortButton_2 = document.getElementById("sortButton_2");
+
+    // Función para ordenar la tabla
+    function sortTable() 
+    {
+        // Obtener filas y convertirlas en un array
+        var rows = Array.from(table.rows);
+
+        // Ordenar las filas en función de la columna de edad en orden ascendente o descendente
+        rows.sort(function (a, b) 
+        {
+            var ageA = parseInt(a.cells[2].textContent);
+            var ageB = parseInt(b.cells[2].textContent);
+
+            if (ascending) {
+                return ageA - ageB; // Orden ascendente
+            } else {
+                return ageB - ageA; // Orden descendente
+            }
+        });
+
+        // Eliminar las filas existentes de la tabla
+        for (var i = table.rows.length - 1; i > 0; i--) {
+            table.deleteRow(i);
+        }
+
+        // Agregar las filas ordenadas nuevamente a la tabla
+        rows.forEach(function (row) {
+            table.appendChild(row);
+        });
+
+        // Alternar la bandera de orden ascendente/descendente
+        ascending = !ascending;
+    }
+
+    function sortTable_2() {
+        // Obtener filas y convertirlas en un array
+        var rows = Array.from(table.rows);
+
+        // Ordenar las filas en función de la columna de edad en orden ascendente o descendente
+        rows.sort(function (a, b) {
+            var ageA = parseInt(a.cells[3].textContent);
+            var ageB = parseInt(b.cells[3].textContent);
+
+            if (ascending) {
+                return ageA - ageB; // Orden ascendente
+            } else {
+                return ageB - ageA; // Orden descendente
+            }
+        });
+
+        // Eliminar las filas existentes de la tabla
+        for (var i = table.rows.length - 1; i > 0; i--) {
+            table.deleteRow(i);
+        }
+
+        // Agregar las filas ordenadas nuevamente a la tabla
+        rows.forEach(function (row) {
+            table.appendChild(row);
+        });
+
+        // Alternar la bandera de orden ascendente/descendente
+        ascending = !ascending;
+    }
+
+    // Agregar event listener al botón para llamar a la función de ordenamiento
+    sortButton.addEventListener("click", sortTable);
+    sortButton_2.addEventListener("click", sortTable_2);
+    
 
 </script>

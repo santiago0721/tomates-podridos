@@ -193,8 +193,15 @@ namespace tomates_podridos.Controllers
         {
             List<Pelicula> lista_peliculas = this.Buscar_peliculas();
             List<Show> lista_shows = this.Buscar_shows();
+            List<Pelicula> lista_tops_peliculas = this.buscar_tops_peliculas();
+            List<Show> lista_tops_shows = this.buscar_tops_shows();    
+
             ViewBag.peliculas = lista_peliculas;
             ViewBag.Shows = lista_shows;
+            ViewBag.peliculas_tops = lista_tops_peliculas;
+            ViewBag.Shows_tops = lista_tops_shows;
+
+
             ViewBag.self = this;
             return View();
         }
@@ -241,6 +248,55 @@ namespace tomates_podridos.Controllers
             else
             {
                 return consulta.ToList();
+            }
+
+        }
+        
+
+        
+
+
+        public List<Pelicula> buscar_tops_peliculas() 
+        {
+
+            List<Pelicula> lista_peliculas = new List<Pelicula>();
+
+            var consulta = from c in _context.topsPelicula select c.PeliculaId;
+
+            if (consulta.Count() == 0) { return null; }
+
+            else
+            {
+
+                foreach (var pelicula_id in consulta)
+                {
+                    Pelicula pelicula = (from g in _context.Pelicula where g.Id == pelicula_id select g).FirstAsync().Result;
+                    lista_peliculas.Add(pelicula);
+                }
+
+                return lista_peliculas;
+
+            }
+
+        }
+
+        public List<Show> buscar_tops_shows()
+        {
+
+            var consulta = from c in _context.topsShows select c.ShowId;
+            List<Show> lista_shows = new List<Show>();
+
+            if (consulta.Count() == 0) { return null; }
+
+            else
+            {
+                foreach (var show_id in consulta)
+                {
+                    Show show = (from g in _context.Show where g.Id == show_id select g).FirstAsync().Result;
+                    lista_shows.Add(show);
+                }
+
+                return lista_shows;
             }
 
         }
